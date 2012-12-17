@@ -5,14 +5,14 @@ $exit_file = pop(@mas_file);
 foreach(@mas_file){
 	local $/ = "";
 	if(open(FILE, "<$_")){
-		@file_stat = stat("$_");
-		$total_amount += $file_stat[7];
-		last if($total_amount > 204800) and print "Total Size exceeds"."\n";
-		@symbol2 = grep($_ !~ m/\D/i, @symbol = split(/\s+/, join(" ", @t = <FILE>)));
-		for($a = 0; $a < @symbol2; $a++){
-				$number[$num] = $symbol2[$a];
-				$num++;
-		}			
+		eval('@t = <FILE>;');
+		if(length($@)>0){
+			print $@;
+		}
+		else{
+			eval('push(@number, @symbol2 = grep($_ !~ m/\D/i, @symbol = split(/\s+/, join(" ", @t))));');
+			print $@;
+		}
 	}
 	else{
 		print "Error: $!"."\n";
