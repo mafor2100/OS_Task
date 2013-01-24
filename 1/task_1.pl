@@ -1,4 +1,74 @@
 #!/usr/local/bin/perl
+use Getopt::Std;
+my %opts;
+getopts('ce:',\%opts);
+
+print <<EOH;
+-----------------------------------------------
+H E L P:
+ Usage: task_1.pl [-c|-e <error>]
+ EXAMPLE: task_1.pl -e 3 (3-number of error)
+ -c - Correct job
+ -e - Job with error(list of errors look lower)
+ 
+ LIST OF ERRORS:
+	'RC'      => 0
+	'DC'      => 1
+	'ADD'     => 2
+	'ADDNEXT' => 3
+	'IP'      => 4
+	'ALU'     => 5
+	'ZAPP'    => 6
+	'ZAM2'    => 7
+	'ZAM1'    => 8
+	'VZAP1'   => 9
+-----------------------------------------------
+EOH
+
+%comand =
+(
+	'0' => 'RC',
+	'1' => 'DC',
+	'2' => 'ADD',
+	'3' => 'ADDNEXT',
+	'4' => 'IP',
+	'5' => 'ALU',
+	'6' => 'ZAPP',
+	'7' => 'ZAM2',
+	'8' => 'ZAM1',
+	'9' => 'VZAP1'
+);
+
+#Ошибки
+%error =
+(
+	'RC'      => 1,
+	'DC'      => 1,
+	'ADD'     => 1,
+	'ADDNEXT' => 1,
+	'IP'      => 1,
+	'ALU'     => 1,
+	'ZAPP'    => 1,
+	'ZAM2'    => 1,
+	'ZAM1'    => 1,
+	'VZAP1'   => 1
+);
+if(!%opts){print 'Not argument of comand. Change -c or -e';exit;}
+for(keys %opts)
+{
+	if($opts{'c'}){$comand = 10;print 'Correct job';}
+		elsif($opts{'e'} || $opts{'e'} == 0){$comand = $opts{'e'};}
+			else{$comand = 10;print 'Correct job';}
+}
+if($comand != 10)
+{
+	unless($comand =~ /^[0-9]$/){print "\n\rIncorrect number of error! Look help";}
+	else
+	{
+		$error{$comand{$comand}} = 0;
+		print "\n\rError in the $comand{$comand}\n\r-----------------------------------------------";
+	}
+}
 
 ##I
 #----Память: считывание и функционал для нее----
@@ -298,17 +368,16 @@ sub getprznkALU
 open(F,'>job.txt') or die "$!";
 while(1)
 {
-	setcomRC(readcom(getvalIP));
-    setpar(getocRC,getprznkRON,getfRVV);
-	setoperADD(getvalIR,getadrRC);
-	setoperADDNEXT(getvalIP,2);
-	setvalIP(procMP($pereh,getresADDNEXT,getresADD));
-	procALU($op,getcomRON,procMP($vib,getmem(getresADD),getresADD,0));
-	
-	if($zapp){setmem(getresADD,getresALU)};
-	if($zam2){setvalIR(procMP($chist,getresALU,0))};
-	if($zam1){setRON(getresALU,getprznkALU)};
-	if($vzap1){setRVV(getresALU,1)};
+	if($error{'RC'}){setcomRC(readcom(getvalIP));}
+    if($error{'DC'}){setpar(getocRC,getprznkRON,getfRVV);}
+	if($error{'ADD'}){setoperADD(getvalIR,getadrRC);}
+	if($error{'ADDNEXT'}){setoperADDNEXT(getvalIP,2);}
+	if($error{'IP'}){setvalIP(procMP($pereh,getresADDNEXT,getresADD));}
+	if($error{'ALU'}){procALU($op,getcomRON,procMP($vib,getmem(getresADD),getresADD,0));}
+	if($zapp  && $error{'ZAPP'}){setmem(getresADD,getresALU)};
+	if($zam2  && $error{'ZAM2'}){setvalIR(procMP($chist,getresALU,0))};
+	if($zam1  && $error{'ZAM1'}){setRON(getresALU,getprznkALU)};
+	if($vzap1 && $error{'VZAP1'}){setRVV(getresALU,1)};
 	print F getvalIP.'  '.getocRC.'  '.getadrRC.'  '.getvalIR."\r\n";
 	if (!$pysk){exit;};
 }

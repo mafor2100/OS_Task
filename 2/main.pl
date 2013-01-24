@@ -11,5 +11,8 @@ foreach(@mas_file){
 	};
 	print $@;	
 }
-scalar(@number) == 0 ? print "Buffer is empty file could not be"."\n" : print FILE_OUT join(" ", @number = sort {$a <=> $b} @number);
+eval{
+	scalar(@number) == 0 ? print "Buffer is empty file could not be"."\n" : print FILE_OUT join(" ", @number = sort {$a <=> $b} @number);
+	};
+print $@;	
 close(FILE_OUT);
