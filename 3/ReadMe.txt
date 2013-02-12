@@ -1,0 +1,1 @@
+Для компиляцмм необходимо поместить файл memmap.c в папку apps и добавить memmap.efi в строку TARGETS (файл Makefile в папке apps). Запустить make.
